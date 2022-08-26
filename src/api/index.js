@@ -1,7 +1,9 @@
-// 引入axios
-import axios from 'axios'
-// 配置axios请求的默认基础路径 （即 配置axios请求的根路径）
-axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
+// 封装axios请求
 
-// 登录请求api
+// 引入axios配置文件
+import axios from './axios_config'
+
+// 登录请求api                                'login'为请求路径
 export const loginRequest = loginForm => axios.post('login', loginForm)
+// 左侧菜单列表请求api
+export const getMenuList = () => axios.get('menus')

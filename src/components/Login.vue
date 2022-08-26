@@ -28,6 +28,9 @@
 </template>
 
 <script type="text/ecmascript-6">
+// 引入相应的api登录请求
+import { loginRequest } from '../api'
+
 export default {
   data () {
     const checkpass = (rule, value, callback) => {
@@ -77,8 +80,11 @@ export default {
         // 验证不通过
         if (!valid) return false
 
-        // 验证通过 axios发送登录请求           login为请求路径
-        const {data: res} = await this.$http.post('login', this.loginForm)
+        // 验证通过 axios发送登录请求
+        // // 封装前
+        // // const {data: res} = await this.$http.post('login', this.loginForm)
+        // 封装后
+        const {data: res} = await loginRequest(this.loginForm)
         // 这里 解构data 并重命名为res
         if (res.meta.status !== 200) return this.$message.error('登录失败！')
         this.$message.success('登录成功！')
