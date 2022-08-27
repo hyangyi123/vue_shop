@@ -23,6 +23,7 @@
           :collapse="isCollapse"
           :collapse-transition="false"
           router
+          :default-active="activePath"
         >
           <!-- 一级菜单 注意：这里index接收的是字符串-->
           <el-submenu :index="`${submenu.id}`" v-for="submenu in menuList" :key="submenu.id">
@@ -31,7 +32,12 @@
               <span>{{ submenu.authName }}</span>
             </template>
             <!-- 二级菜单 -->
-            <el-menu-item :index="`/${menuItem.path}`" v-for="menuItem in submenu.children" :key="menuItem.id">
+            <el-menu-item
+            :index="`/home/${menuItem.path}`"
+            v-for="menuItem in submenu.children"
+            @click="saveActivePath(`/home/${menuItem.path}`)"
+            :key="menuItem.id"
+            >
               <template slot="title">
                 <i class="el-icon-menu"></i>
                 <span>{{ menuItem.authName }}</span>
@@ -54,7 +60,7 @@
 
 <script type="text/ecmascript-6">
 // 引入相应的api请求
-import { getMenuList } from '../api'
+import { getMenuListRequest } from '../api'
 export default {
   data () {
     return {
@@ -67,12 +73,16 @@ export default {
         102: 'el-icon-s-management',
         145: 'el-icon-s-data'
       },
-      isCollapse: false
+      // 记录 当前折叠状态
+      isCollapse: false,
+      // 记录 当前激活菜单子项的index
+      activePath: ''
     }
   },
-  // 页面一加载，就获取左侧菜单列表
+  // 页面一加载，就获取左侧菜单列表，获取记录的激活菜单子项，使菜单能够精准高亮并激活默认菜单子项
   created () {
     this.getMenu()
+    this.activePath = window.sessionStorage.getItem('activePath')
   },
   methods: {
     // 退出按钮的回调
@@ -84,12 +94,19 @@ export default {
     },
     // 获取左侧菜单列表
     async getMenu () {
-      const {data: res} = await getMenuList()
+      const {data: res} = await getMenuListRequest()
       // 请求失败
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       // 请求成功
       this.menuList = res.data
-      console.log(this.menuList)
+      // console.log(this.menuList)
+    },
+    // 将当前激活菜单子项 更新记录 并 存入 sessionStorage
+    saveActivePath (activePath) {
+      // 更新记录当前激活菜单子项，使得在不同菜单子项之间切换能够精准高亮
+      this.activePath = activePath
+      // 将当前激活菜单子项 存入 sessionStorage，使重新刷新页面时不丢失
+      window.sessionStorage.setItem('activePath', activePath)
     }
   }
 }
@@ -136,11 +153,11 @@ export default {
         text-align: center;
         font-size: 20px;
         font-weight: bolder;
-        color: rgb(237, 209, 87);
+        color: #c84438;
         letter-spacing: 0.3em;
         line-height: 24px;
         cursor: pointer;
-        background-color: #9daad5;
+        background-color: #d9cfcf;
       }
     }
     // 内容区域

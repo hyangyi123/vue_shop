@@ -33,14 +33,18 @@ import { loginRequest } from '../api'
 
 export default {
   data () {
-    const checkpass = (rule, value, callback) => {
+    // 自定义验证规则  校验密码
+    const checkPassword = (rule, value, callback) => {
       // 配置正则表达式
       const patrn = /^[A-z0-9_]+$/
-      if (value === '') {
-        callback(new Error('密码不能为空！'))
+      if (value.length < 6 || value.length > 15) {
+        // 长度不合法
+        return callback(new Error('密码的长度在 6~15 个字符之间'))
       } else if (!patrn.test(value)) {
-        callback(new Error('必须由字母、数字、下划线组成，不能含有其它非法符号'))
+        // 非法密码
+        callback(new Error('可以是字母、数字、下划线组成，不能含有其它非法符号'))
       } else {
+        // 合法密码
         callback()
       }
     }
@@ -56,13 +60,13 @@ export default {
         // 校验用户名
         username: [
           { required: true, message: '用户名不能为空', trigger: 'blur' },
-          { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+          { min: 3, max: 10, message: '用户名的长度在 3~10 个字符之间', trigger: 'blur' }
         ],
         // 校验密码
         password: [
-          { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' },
+          { required: true, message: '请输入密码', trigger: 'blur' },
           // 采用自定义验证规则
-          { validator: checkpass, trigger: 'blur' }
+          { validator: checkPassword, trigger: 'blur' }
         ]
       }
     }
