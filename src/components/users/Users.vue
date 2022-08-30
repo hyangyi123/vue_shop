@@ -7,7 +7,7 @@
       <el-breadcrumb-item>用户列表</el-breadcrumb-item>
     </el-breadcrumb>
     <!-- 卡片视图区域 -->
-    <el-card class="box-card">
+    <el-card>
       <!-- 搜索与添加用户区域 -->
       <el-row :gutter="30">
         <el-col :span="8">
@@ -16,7 +16,7 @@
           </el-input>
         </el-col>
         <el-col :span="4">
-          <el-button @click="addDialogVisible = true" type="primary">添加用户</el-button>
+          <el-button @click="addUserDialogVisible = true" type="primary">添加用户</el-button>
         </el-col>
       </el-row>
       <!-- 用户列表显示区域 -->
@@ -38,13 +38,13 @@
               <el-switch v-model="row.mg_state" @change="userStateChange(row)"></el-switch>
             </template>
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="操作" width="200">
             <!-- 通过作用域插槽的形式 自定义操作列的渲染 -->
             <template v-slot="{ row }">
               <el-button @click="showEditDialog(row.id)" type="primary" icon="el-icon-edit" size="mini" circle></el-button>
               <el-button @click="deleteUser(row.id)" type="danger" icon="el-icon-delete" size="mini" circle></el-button>
               <el-tooltip :enterable="false" effect="dark" content="分配角色" placement="top">
-                <el-button type="warning" icon="el-icon-setting" size="mini" circle></el-button>
+                <el-button @click="showSetRoleDialog(row)" type="warning" icon="el-icon-setting" size="mini" circle></el-button>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -66,7 +66,7 @@
     </el-card>
 
     <!-- 添加用户对话框 -->
-    <el-dialog title="添加用户" :visible.sync="addDialogVisible" @close="addDialogClose" width="50%">
+    <el-dialog title="添加用户" :visible.sync="addUserDialogVisible" @close="addUserDialogClose" width="50%">
       <!-- 内容主体区域 -->
       <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="80px">
         <el-form-item label="用户名" prop="username">
@@ -83,13 +83,13 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="addDialogVisible = false">取 消</el-button>
+        <el-button @click="addUserDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="addUser">确 定</el-button>
       </span>
     </el-dialog>
 
     <!-- 修改用户对话框-->
-     <el-dialog title="修改用户" @close="editDialogClose" :visible.sync="editDialogVisible" width="50%">
+     <el-dialog title="修改用户" @close="editUserDialogClose" :visible.sync="editUserDialogVisible" width="50%">
       <!-- 内容主体区域 -->
       <el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="80px">
         <el-form-item label="用户名">
@@ -103,8 +103,31 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="editDialogVisible = false">取 消</el-button>
+        <el-button @click="editUserDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="editUser">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 分配角色对话框 -->
+    <el-dialog @close="setRoleDialogClose" title="分配角色" :visible.sync="setRoleDialogVisible" width="50%">
+      <!-- 内容主体区域 -->
+      <div>
+        <p>当前的用户：{{userInfo.username}}</p>
+        <p>当前的角色：{{userInfo.role_name}}</p>
+        <p>分配新角色：
+          <el-select v-model="selectedRoleId" placeholder="请选择">
+            <el-option
+            v-for="role in rolesList"
+            :key="role.id"
+            :label="role.roleName"
+            :value="role.id"
+            >
+            </el-option>
+          </el-select>
+        </p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="setRole">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -113,7 +136,8 @@
 <script type="text/ecmascript-6">
 // 引入相应的api请求
 import { getUsersListRequest, updateUserStateRequest, addUserRequest,
-  getUserRequest, editUserRequest, deleteUserRequest } from '../../api'
+  getUserRequest, editUserRequest, deleteUserRequest, getRolesListRequest,
+  allotRoleByIdRequest } from '../../api'
 export default {
   data () {
     // 自定义验证规则  校验密码
@@ -165,9 +189,10 @@ export default {
       },
       // 记录 用户数据总条数（即 总共有多少条用户数据）
       total: 0,
+      // 用户数据列表
       usersList: [],
       // 控制 添加用户对话框的显示
-      addDialogVisible: false,
+      addUserDialogVisible: false,
       // 添加用户表单的数据绑定对象
       addForm: {
         username: '',
@@ -198,7 +223,7 @@ export default {
         ]
       },
       // 控制 修改用户对话框的显示
-      editDialogVisible: false,
+      editUserDialogVisible: false,
       // 修改用户表单的数据绑定对象
       editForm: {},
       // 修改用户表单的规则验证对象
@@ -213,7 +238,15 @@ export default {
           // 采用自定义验证规则
           { validator: checkMobile, trigger: 'blur' }
         ]
-      }
+      },
+      // 控制 分配角色对话框的显示
+      setRoleDialogVisible: false,
+      // 记录当前要分配角色的用户数据
+      userInfo: '',
+      // 所有角色数据列表(注意：每个角色里面包含了对应权限)
+      rolesList: [],
+      // 记录 分配角色对话框中下拉列表选中的角色id值
+      selectedRoleId: ''
     }
   },
   created () {
@@ -256,7 +289,7 @@ export default {
       this.$message.success('修改用户状态成功！')
     },
     // 监听 添加用户对话框 关闭时的回调
-    addDialogClose () {
+    addUserDialogClose () {
       // 重置表单
       this.$refs.addFormRef.resetFields()
     },
@@ -266,7 +299,6 @@ export default {
       this.$refs.addFormRef.validate(async valid => {
         // 验证不通过
         if (!valid) return false
-
         // 验证通过
         // 发送axios请求 添加用户
         const {data: res} = await addUserRequest(this.addForm)
@@ -274,7 +306,7 @@ export default {
         if (res.meta.status !== 201) return this.$message.error('添加用户失败！')
         // 请求成功
         // 关闭添加用户对话框
-        this.addDialogVisible = false
+        this.addUserDialogVisible = false
         this.$message.success('添加用户成功！')
         // 重新获取用户数据列表 刷新渲染
         this.getUsers()
@@ -290,10 +322,10 @@ export default {
       // 存入修改用户表单的数据绑定对象
       this.editForm = res.data
       // 显示修改用户对话框
-      this.editDialogVisible = true
+      this.editUserDialogVisible = true
     },
     // 监听 修改用户对话框 关闭时的回调
-    editDialogClose () {
+    editUserDialogClose () {
       // 重置表单
       this.$refs.editFormRef.resetFields()
     },
@@ -309,7 +341,7 @@ export default {
         if (res.meta.status !== 200) return this.$message.error('修改用户失败！')
         // 请求成功
         // 关闭修改用户对话框
-        this.editDialogVisible = false
+        this.editUserDialogVisible = false
         this.$message.success('修改用户成功！')
         // 重新获取用户数据列表 刷新渲染
         this.getUsers()
@@ -335,6 +367,42 @@ export default {
       }).catch(() => {
         this.$message.info('已取消删除')
       })
+    },
+    // 分配角色按钮的回调 展示分配角色对话框
+    async showSetRoleDialog (userInfo) {
+      // 记录当前要分配角色的用户数据
+      this.userInfo = userInfo
+      // 发送axios请求 获取所有角色数据列表
+      const {data: res} = await getRolesListRequest()
+      // 请求失败
+      if (res.meta.status !== 200) return this.$message.error('获取角色列表失败！')
+      // 请求成功
+      this.rolesList = res.data
+      console.log(this.rolesList)
+      // 显示分配角色对话框
+      this.setRoleDialogVisible = true
+    },
+    // 分配角色对话框 确定按钮的回调
+    async setRole () {
+      // 未选择要分配的新角色
+      if (!this.selectedRoleId) return this.$message.error('请选择要分配的新角色！')
+      // 已选
+      // 发送axios请求  对指定id用户分配某个角色
+      const {data: res} = await allotRoleByIdRequest(this.userInfo.id, this.selectedRoleId)
+      if (res.meta.status !== 200) return this.$message.error('分配角色失败！')
+      // 请求成功
+      this.$message.success('分配角色成功！')
+      // 关闭分配角色对话框
+      this.setRoleDialogVisible = false
+      // 更新用户列表 页面刷新渲染
+      this.getUsers()
+    },
+    // 监听 分配角色对话框 关闭的回调
+    setRoleDialogClose () {
+      // 重置下拉列表的选中值
+      this.selectedRoleId = ''
+      // 初始化用户数据
+      this.userInfo = ''
     }
   }
 }
