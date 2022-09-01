@@ -18,18 +18,18 @@ export const getUsersListRequest = queryObj => axios.get('users',
 // 修改更新用户数据的状态
 export const updateUserStateRequest = userInfo => axios.put(`users/${userInfo.id}/state/${userInfo.mg_state}`)
 // 添加用户
-export const addUserRequest = addForm => axios.post('users', addForm)
-// 根据指定id查询用户
-export const getUserRequest = id => axios.get(`users/${id}`)
+export const addUserRequest = addUserForm => axios.post('users', addUserForm)
+// 根据指定id查询用户数据
+export const getUserRequest = userId => axios.get(`users/${userId}`)
 // 根据指定id和相关参数修改用户
-export const editUserRequest = editForm => axios.put(`users/${editForm.id}`,
+export const editUserRequest = editUserForm => axios.put(`users/${editUserForm.id}`,
   {
-    email: editForm.email,
-    mobile: editForm.mobile
+    email: editUserForm.email,
+    mobile: editUserForm.mobile
   }
 )
 // 根据指定id删除用户
-export const deleteUserRequest = id => axios.delete(`users/${id}`)
+export const deleteUserRequest = userId => axios.delete(`users/${userId}`)
 // 对指定id用户分配某个角色
 export const allotRoleByIdRequest = (userId, roleId) => axios.put(`users/${userId}/role`,
   {
@@ -49,3 +49,16 @@ export const allotRightsByIdRequest = (roleId, checkedRightIdsStr) => axios.post
     rids: checkedRightIdsStr
   }
 )
+// 添加角色
+export const addRoleRequest = addRoleForm => axios.post('roles', addRoleForm)
+// 根据指定id查询角色数据
+export const getRoleRequest = roleId => axios.get(`roles/${roleId}`)
+// 根据指定id和相关参数修改角色
+export const editRoleRequest = editRoleForm => axios.put(`roles/${editRoleForm.roleId}`,
+  {
+    roleName: editRoleForm.roleName,
+    roleDesc: editRoleForm.roleDesc
+  }
+)
+// 根据指定id删除角色
+export const deleteRoleRequest = roleId => axios.delete(`roles/${roleId}`)

@@ -29,6 +29,7 @@ export default [
       { path: '/home/users', component: Users },
       { path: '/home/rights', component: Rights },
       { path: '/home/roles', component: Roles }
+
     ]
   }
 
