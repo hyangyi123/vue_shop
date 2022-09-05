@@ -7,6 +7,8 @@ import router from './router'
 // 这里全局按需引入可能是插件冲突原因，暂时用全局完全引入
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+// 引入树形网格插件
+import TreeTable from 'vue-table-with-tree-grid'
 
 // // 这里也可以通过写api模块封装axios请求 直接引入相应请求api即可
 // // 引入axios
@@ -18,6 +20,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 // 使用use加载ElementUI的全部组件，挂载到全局
 Vue.use(ElementUI)
+// 将TreeTable注册为全局组件
+Vue.component('tree-table', TreeTable)
 
 new Vue({
   el: '#app',

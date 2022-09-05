@@ -66,7 +66,7 @@
     </el-card>
 
     <!-- 添加用户对话框 -->
-    <el-dialog title="添加用户" :visible.sync="addUserDialogVisible" @close="addUserDialogClose" width="50%">
+    <el-dialog title="添加用户" :visible.sync="addUserDialogVisible" @close="addUserDialogClosed" width="50%">
       <!-- 内容主体区域 -->
       <el-form :model="addUserForm" :rules="addUserFormRules" ref="addUserFormRef" label-width="80px">
         <el-form-item label="用户名" prop="username">
@@ -89,7 +89,7 @@
     </el-dialog>
 
     <!-- 修改用户对话框-->
-     <el-dialog title="修改用户" @close="editUserDialogClose" :visible.sync="editUserDialogVisible" width="50%">
+     <el-dialog title="修改用户" @close="editUserDialogClosed" :visible.sync="editUserDialogVisible" width="50%">
       <!-- 内容主体区域 -->
       <el-form :model="editUserForm" :rules="editUserFormRules" ref="editUserFormRef" label-width="80px">
         <el-form-item label="用户名">
@@ -289,7 +289,7 @@ export default {
       this.$message.success('修改用户状态成功！')
     },
     // 监听 添加用户对话框 关闭时的回调
-    addUserDialogClose () {
+    addUserDialogClosed () {
       // 重置表单
       this.$refs.addUserFormRef.resetFields()
     },
@@ -325,9 +325,11 @@ export default {
       this.editUserDialogVisible = true
     },
     // 监听 修改用户对话框 关闭时的回调
-    editUserDialogClose () {
+    editUserDialogClosed () {
       // 重置表单
       this.$refs.editUserFormRef.resetFields()
+      // 初始化修改用户表单的数据绑定对象(有些许多余)
+      this.editUserForm = {}
     },
     // 修改用户对话框 确定按钮的回调
     editUser () {

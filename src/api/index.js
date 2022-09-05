@@ -9,7 +9,7 @@ export const loginRequest = loginForm => axios.post('login', loginForm)
 export const getMenuListRequest = () => axios.get('menus')
 // 用户数据列表
 export const getUsersListRequest = queryObj => axios.get('users',
-  { // 💥注意：axios的get请求，必须传入一个含有params属性对象的对象
+  { // 💥注意：axios的get请求体携带参数，必须传入一个params属性对象
     params: {
       ...queryObj
     }
@@ -19,7 +19,7 @@ export const getUsersListRequest = queryObj => axios.get('users',
 export const updateUserStateRequest = userInfo => axios.put(`users/${userInfo.id}/state/${userInfo.mg_state}`)
 // 添加用户
 export const addUserRequest = addUserForm => axios.post('users', addUserForm)
-// 根据指定id查询用户数据
+// 根据指定id查询用户
 export const getUserRequest = userId => axios.get(`users/${userId}`)
 // 根据指定id和相关参数修改用户
 export const editUserRequest = editUserForm => axios.put(`users/${editUserForm.id}`,
@@ -62,3 +62,32 @@ export const editRoleRequest = editRoleForm => axios.put(`roles/${editRoleForm.r
 )
 // 根据指定id删除角色
 export const deleteRoleRequest = roleId => axios.delete(`roles/${roleId}`)
+// ------------------------------------------------------------------------------
+// 获取所有商品分类数据列表(type已默认为3)
+export const getCategoriesRequest = queryObj => axios.get('categories',
+  {
+    // get请求体携带参数，必须是一个params属性对象
+    params: queryObj
+  }
+)
+// 通过type获取 指定层级的商品分类数据列表
+export const getCategoriesByTypeRequest = type => axios.get('categories',
+  {
+    params: {
+      // type值 1，2，3     3表示所有分类；2表示一级、二级分类；1表示三级分类
+      type
+    }
+  }
+)
+// 添加分类
+export const addCateRequest = addCateForm => axios.post('categories', addCateForm)
+// 根据指定id查询分类
+export const getCateRequest = cateId => axios.get(`categories/${cateId}`)
+// 根据指定id和相关参数修改分类
+export const editCateRequest = editCateForm => axios.put(`categories/${editCateForm.cat_id}`,
+  {
+    cat_name: editCateForm.cat_name
+  }
+)
+// 根据指定id删除分类
+export const deleteCateRequest = cateId => axios.delete(`categories/${cateId}`)

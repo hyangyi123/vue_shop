@@ -7,6 +7,7 @@ import Welcome from '../components/Welcome.vue'
 import Users from '../components/users/Users.vue'
 import Rights from '../components/power/Rights.vue'
 import Roles from '../components/power/Roles.vue'
+import Cate from '../components/goods/Cate.vue'
 
 export default [
   // 路由重定向
@@ -28,8 +29,8 @@ export default [
       // 注意：由于左侧菜单栏对应各个组件是作为子组件嵌套到首页的el-main去显示，所以都必须作为'/home'的子路由
       { path: '/home/users', component: Users },
       { path: '/home/rights', component: Rights },
-      { path: '/home/roles', component: Roles }
-
+      { path: '/home/roles', component: Roles },
+      { path: '/home/categories', component: Cate }
     ]
   }
 
