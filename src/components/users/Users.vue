@@ -41,7 +41,7 @@
           <el-table-column label="操作" width="200">
             <!-- 通过作用域插槽的形式 自定义操作列的渲染 -->
             <template v-slot="{ row }">
-              <el-button @click="showEditDialog(row.id)" type="primary" icon="el-icon-edit" size="mini" circle></el-button>
+              <el-button @click="showEditUserDialog(row.id)" type="primary" icon="el-icon-edit" size="mini" circle></el-button>
               <el-button @click="deleteUser(row.id)" type="danger" icon="el-icon-delete" size="mini" circle></el-button>
               <el-tooltip :enterable="false" effect="dark" content="分配角色" placement="top">
                 <el-button @click="showSetRoleDialog(row)" type="warning" icon="el-icon-setting" size="mini" circle></el-button>
@@ -66,20 +66,20 @@
     </el-card>
 
     <!-- 添加用户对话框 -->
-    <el-dialog title="添加用户" :visible.sync="addUserDialogVisible" @close="addUserDialogClose" width="50%">
+    <el-dialog title="添加用户" :visible.sync="addUserDialogVisible" @close="addUserDialogClosed" width="50%">
       <!-- 内容主体区域 -->
-      <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="80px">
+      <el-form :model="addUserForm" :rules="addUserFormRules" ref="addUserFormRef" label-width="80px">
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="addForm.username"></el-input>
+          <el-input v-model="addUserForm.username"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model="addForm.password"></el-input>
+          <el-input v-model="addUserForm.password"></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
-          <el-input v-model="addForm.email"></el-input>
+          <el-input v-model="addUserForm.email"></el-input>
         </el-form-item>
         <el-form-item label="手机" prop="mobile">
-          <el-input v-model="addForm.mobile"></el-input>
+          <el-input v-model="addUserForm.mobile"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -89,17 +89,17 @@
     </el-dialog>
 
     <!-- 修改用户对话框-->
-     <el-dialog title="修改用户" @close="editUserDialogClose" :visible.sync="editUserDialogVisible" width="50%">
+     <el-dialog title="修改用户" @close="editUserDialogClosed" :visible.sync="editUserDialogVisible" width="50%">
       <!-- 内容主体区域 -->
-      <el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="80px">
+      <el-form :model="editUserForm" :rules="editUserFormRules" ref="editUserFormRef" label-width="80px">
         <el-form-item label="用户名">
-          <el-input v-model="editForm.username" disabled></el-input>
+          <el-input v-model="editUserForm.username" disabled></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
-          <el-input v-model="editForm.email"></el-input>
+          <el-input v-model="editUserForm.email"></el-input>
         </el-form-item>
         <el-form-item label="手机" prop="mobile">
-          <el-input v-model="editForm.mobile"></el-input>
+          <el-input v-model="editUserForm.mobile"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -194,14 +194,14 @@ export default {
       // 控制 添加用户对话框的显示
       addUserDialogVisible: false,
       // 添加用户表单的数据绑定对象
-      addForm: {
+      addUserForm: {
         username: '',
         password: '',
         email: '',
         mobile: ''
       },
       // 添加用户表单的规则验证对象
-      addFormRules: {
+      addUserFormRules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
           { min: 3, max: 10, message: '用户名的长度在 3~10 个字符之间', trigger: 'blur' }
@@ -225,9 +225,9 @@ export default {
       // 控制 修改用户对话框的显示
       editUserDialogVisible: false,
       // 修改用户表单的数据绑定对象
-      editForm: {},
+      editUserForm: {},
       // 修改用户表单的规则验证对象
-      editFormRules: {
+      editUserFormRules: {
         email: [
           { required: true, message: '请输入邮箱', trigger: 'blur' },
           // 采用自定义验证规则
@@ -289,19 +289,19 @@ export default {
       this.$message.success('修改用户状态成功！')
     },
     // 监听 添加用户对话框 关闭时的回调
-    addUserDialogClose () {
+    addUserDialogClosed () {
       // 重置表单
-      this.$refs.addFormRef.resetFields()
+      this.$refs.addUserFormRef.resetFields()
     },
     // 添加用户对话框 确定按钮的回调
     addUser () {
       // 进行表单统一验证
-      this.$refs.addFormRef.validate(async valid => {
+      this.$refs.addUserFormRef.validate(async valid => {
         // 验证不通过
         if (!valid) return false
         // 验证通过
         // 发送axios请求 添加用户
-        const {data: res} = await addUserRequest(this.addForm)
+        const {data: res} = await addUserRequest(this.addUserForm)
         // 请求失败
         if (res.meta.status !== 201) return this.$message.error('添加用户失败！')
         // 请求成功
@@ -313,31 +313,33 @@ export default {
       })
     },
     // 表格项中修改按钮的回调 展示修改用户对话框
-    async showEditDialog (id) {
+    async showEditUserDialog (userId) {
       // 发送axios请求 通过指定id获取用户数据
-      const {data: res} = await getUserRequest(id)
+      const {data: res} = await getUserRequest(userId)
       // 请求失败
       if (res.meta.status !== 200) return this.$message.error('获取用户数据失败！')
       // 请求成功
       // 存入修改用户表单的数据绑定对象
-      this.editForm = res.data
+      this.editUserForm = res.data
       // 显示修改用户对话框
       this.editUserDialogVisible = true
     },
     // 监听 修改用户对话框 关闭时的回调
-    editUserDialogClose () {
+    editUserDialogClosed () {
       // 重置表单
-      this.$refs.editFormRef.resetFields()
+      this.$refs.editUserFormRef.resetFields()
+      // 初始化修改用户表单的数据绑定对象(有些许多余)
+      this.editUserForm = {}
     },
     // 修改用户对话框 确定按钮的回调
     editUser () {
       // 进行表单统一验证
-      this.$refs.editFormRef.validate(async valid => {
+      this.$refs.editUserFormRef.validate(async valid => {
         // 校验不通过
         if (!valid) return
         // 校验通过
         // 发送axios请求 根据指定id和相关参数修改用户数据
-        const {data: res} = await editUserRequest(this.editForm)
+        const {data: res} = await editUserRequest(this.editUserForm)
         if (res.meta.status !== 200) return this.$message.error('修改用户失败！')
         // 请求成功
         // 关闭修改用户对话框
@@ -348,7 +350,7 @@ export default {
       })
     },
     // 表格项中删除按钮的回调
-    deleteUser (id) {
+    deleteUser (userId) {
       // 弹出提示弹框
       this.$confirm('确定永久删除该用户吗？', '提示', {
         confirmButtonText: '确定',
@@ -357,7 +359,7 @@ export default {
         center: true
       }).then(async () => {
         // 发送axios请求 根据指定id删除用户数据
-        const {data: res} = await deleteUserRequest(id)
+        const {data: res} = await deleteUserRequest(userId)
         // 请求失败
         if (res.meta.status !== 200) return this.$message.error('删除用户失败')
         // 请求成功
