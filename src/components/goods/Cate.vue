@@ -78,6 +78,8 @@
           :props="cascaderProps"
           @change="selectedCateChange"
           clearable
+          filterable
+          placeholder="可搜索关键字..."
           >
           </el-cascader>
         </el-form-item>

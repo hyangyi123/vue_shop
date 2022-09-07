@@ -70,7 +70,7 @@ export const getCategoriesRequest = queryObj => axios.get('categories',
     params: queryObj
   }
 )
-// 通过type获取 指定层级的商品分类数据列表
+// 通过type获取 指定层级的商品分类数据列表(若type不传，则默认获取所有层级的商品分类数据列表)
 export const getCategoriesByTypeRequest = type => axios.get('categories',
   {
     params: {
@@ -91,3 +91,44 @@ export const editCateRequest = editCateForm => axios.put(`categories/${editCateF
 )
 // 根据指定id删除分类
 export const deleteCateRequest = cateId => axios.delete(`categories/${cateId}`)
+// ------------------------------------------------------------------------------
+// 根据指定的三级分类id和激活面板名称(sel参数值)，获取对应的参数数据列表
+export const getParamsListRequest = (threeLevelCateId, activeName) => axios.get(`categories/${threeLevelCateId}/attributes`,
+  {
+    params: {
+      sel: activeName
+    }
+  }
+)
+// 根据指定的三级分类id和激活面板名称等相关参数 添加动态参数或静态属性
+export const addParamsRequest = (threeLevelCateId, activeName, addParamsForm) => axios.post(`categories/${threeLevelCateId}/attributes`,
+  {
+    attr_name: addParamsForm.attr_name,
+    attr_sel: activeName
+  }
+)
+// 根据指定的三级分类id和激活面板名称、指定的参数/属性id 查询获取对应参数数据
+export const getParamsRequest = (threeLevelCateId, activeName, paramsId) => axios.get(`categories/${threeLevelCateId}/attributes/${paramsId}`,
+  {
+    params: {
+      attr_sel: activeName
+    }
+  }
+)
+// 根据指定的三级分类id和激活面板名称、指定的参数/属性id、修改后的参数名称 修改对应参数数据
+export const editParamsRequest = (threeLevelCateId, editParamsForm) => axios.put(`categories/${threeLevelCateId}/attributes/${editParamsForm.attr_id}`,
+  {
+    attr_name: editParamsForm.attr_name,
+    attr_sel: editParamsForm.attr_sel
+  }
+)
+// 根据指定的三级分类id和参数/属性id 删除对应参数数据
+export const deleteParamsRequest = (threeLevelCateId, paramsId) => axios.delete(`categories/${threeLevelCateId}/attributes/${paramsId}`)
+// 根据指定的三级分类id和激活面板名称、参数/属性id、参数名称、参数项(包含新增标签的值) 更新对应参数数据
+export const updateParamsRequest = (threeLevelCateId, activeName, paramsId, paramsName, paramsItem) => axios.put(`categories/${threeLevelCateId}/attributes/${paramsId}`,
+  {
+    attr_name: paramsName,
+    attr_sel: activeName,
+    attr_vals: paramsItem
+  }
+)

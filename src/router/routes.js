@@ -8,6 +8,7 @@ import Users from '../components/users/Users.vue'
 import Rights from '../components/power/Rights.vue'
 import Roles from '../components/power/Roles.vue'
 import Cate from '../components/goods/Cate.vue'
+import Params from '../components/goods/Params.vue'
 
 export default [
   // 路由重定向
@@ -30,7 +31,8 @@ export default [
       { path: '/home/users', component: Users },
       { path: '/home/rights', component: Rights },
       { path: '/home/roles', component: Roles },
-      { path: '/home/categories', component: Cate }
+      { path: '/home/categories', component: Cate },
+      { path: '/home/params', component: Params }
     ]
   }
 
