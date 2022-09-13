@@ -9,6 +9,9 @@ import Rights from '../components/power/Rights.vue'
 import Roles from '../components/power/Roles.vue'
 import Cate from '../components/goods/Cate.vue'
 import Params from '../components/goods/Params.vue'
+import Goods from '../components/goods/Goods.vue'
+import AddGood from '../components/goods/AddGood.vue'
+import EditGood from '../components/goods/EditGood.vue'
 
 export default [
   // 路由重定向
@@ -32,7 +35,10 @@ export default [
       { path: '/home/rights', component: Rights },
       { path: '/home/roles', component: Roles },
       { path: '/home/categories', component: Cate },
-      { path: '/home/params', component: Params }
+      { path: '/home/params', component: Params },
+      { path: '/home/goods', component: Goods },
+      { path: '/home/goods/add', component: AddGood },
+      { path: '/home/goods/edit/:id', component: EditGood }
     ]
   }
 

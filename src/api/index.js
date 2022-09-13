@@ -132,3 +132,18 @@ export const updateParamsRequest = (threeLevelCateId, activeName, paramsId, para
     attr_vals: paramsItem
   }
 )
+// ------------------------------------------------------------------------------
+// 获取所有商品数据列表
+export const getGoodsListRequest = queryObj => axios.get('goods',
+  {
+    params: queryObj
+  }
+)
+// 根据指定商品id删除商品数据
+export const deleteGoodRequest = goodId => axios.delete(`goods/${goodId}`)
+// 添加商品数据
+export const addGoodRequest = addGoodForm => axios.post('goods', addGoodForm)
+// 根据指定商品id查询商品数据
+export const getGoodRequest = goodId => axios.get(`goods/${goodId}`)
+// 根据指定商品id和相关参数数据修改商品数据
+export const editGoodRequest = editGoodForm => axios.put(`goods/${editGoodForm.goods_id}`, editGoodForm)
