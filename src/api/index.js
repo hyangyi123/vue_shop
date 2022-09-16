@@ -147,3 +147,16 @@ export const addGoodRequest = addGoodForm => axios.post('goods', addGoodForm)
 export const getGoodRequest = goodId => axios.get(`goods/${goodId}`)
 // 根据指定商品id和相关参数数据修改商品数据
 export const editGoodRequest = editGoodForm => axios.put(`goods/${editGoodForm.goods_id}`, editGoodForm)
+// ------------------------------------------------------------------------------
+// 获取所有订单数据列表
+export const getOrdersListRequest = queryObj => axios.get('orders',
+  {
+    params: queryObj
+  }
+)
+// 根据指定物流单号获取物流进度信息
+export const getLogisticsProcessRequest = logisticsId => axios.get(`/kuaidi/${logisticsId}`)
+// 根据指定订单id获取对应订单数据
+export const getOrderRequest = orderId => axios.get(`orders/${orderId}`)
+// 根据指定订单id和相关参数(如果参数不填写，就不会更新该参数数据)修改订单状态
+export const editOrderRequest = editOrderForm => axios.put(`orders/${editOrderForm.order_id}`, editOrderForm)

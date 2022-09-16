@@ -12,6 +12,8 @@ import Params from '../components/goods/Params.vue'
 import Goods from '../components/goods/Goods.vue'
 import AddGood from '../components/goods/AddGood.vue'
 import EditGood from '../components/goods/EditGood.vue'
+import Orders from '../components/orders/Orders.vue'
+import EditOrder from '../components/orders/EditOrder.vue'
 
 export default [
   // 路由重定向
@@ -38,7 +40,9 @@ export default [
       { path: '/home/params', component: Params },
       { path: '/home/goods', component: Goods },
       { path: '/home/goods/add', component: AddGood },
-      { path: '/home/goods/edit/:id', component: EditGood }
+      { path: '/home/goods/edit/:id', component: EditGood },
+      { path: '/home/orders', component: Orders },
+      { path: '/home/orders/edit/:id', component: EditOrder }
     ]
   }
 

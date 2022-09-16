@@ -42,13 +42,13 @@
                 <el-input v-model="editGoodForm.goods_name"></el-input>
               </el-form-item>
               <el-form-item label="商品价格" prop="goods_price">
-                <el-input v-model="editGoodForm.goods_price" type="number"></el-input>
+                <el-input v-model="editGoodForm.goods_price"></el-input>
               </el-form-item>
               <el-form-item label="商品重量" prop="goods_weight">
-                <el-input v-model="editGoodForm.goods_weight" type="number"></el-input>
+                <el-input v-model="editGoodForm.goods_weight"></el-input>
               </el-form-item>
               <el-form-item label="商品数量" prop="goods_number">
-                <el-input v-model="editGoodForm.goods_number" type="number"></el-input>
+                <el-input v-model="editGoodForm.goods_number"></el-input>
               </el-form-item>
               <el-form-item label="商品分类" prop="goods_cat">
                 <!-- 级联选择器 -->
