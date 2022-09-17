@@ -14,6 +14,7 @@ import AddGood from '../components/goods/AddGood.vue'
 import EditGood from '../components/goods/EditGood.vue'
 import Orders from '../components/orders/Orders.vue'
 import EditOrder from '../components/orders/EditOrder.vue'
+import Report from '../components/report/Report.vue'
 
 export default [
   // 路由重定向
@@ -42,7 +43,8 @@ export default [
       { path: '/home/goods/add', component: AddGood },
       { path: '/home/goods/edit/:id', component: EditGood },
       { path: '/home/orders', component: Orders },
-      { path: '/home/orders/edit/:id', component: EditOrder }
+      { path: '/home/orders/edit/:id', component: EditOrder },
+      { path: '/home/reports', component: Report }
     ]
   }
 

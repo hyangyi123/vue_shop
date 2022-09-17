@@ -160,3 +160,6 @@ export const getLogisticsProcessRequest = logisticsId => axios.get(`/kuaidi/${lo
 export const getOrderRequest = orderId => axios.get(`orders/${orderId}`)
 // 根据指定订单id和相关参数(如果参数不填写，就不会更新该参数数据)修改订单状态
 export const editOrderRequest = editOrderForm => axios.put(`orders/${editOrderForm.order_id}`, editOrderForm)
+// ------------------------------------------------------------------------------
+// 根据不同type值获取不同类型的折线图表
+export const getReportChart = type => axios.get(`reports/type/${type}`)
